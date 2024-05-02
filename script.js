@@ -100,6 +100,24 @@ const movePaddle = () => {
   }
 };
 
+// Make all bricks appear
+const showAllBricks = () => {
+  bricksArray.forEach((brickRow) => {
+    brickRow.forEach((brick) => {
+      brick.visible = true;
+    });
+  });
+};
+
+// Increase score
+const increaseScore = () => {
+  score++;
+
+  if (score % (brickRowCount * brickColumnCount) === 0) {
+    showAllBricks();
+  }
+};
+
 // Move ball on canvas
 const moveBall = () => {
   ball.x += ball.dx;
@@ -136,10 +154,18 @@ const moveBall = () => {
         ) {
           ball.dy *= -1;
           brick.visible = false;
+
+          increaseScore();
         }
       }
     });
   });
+
+  // lose check
+  if (ball.y + ball.size > canvas.height) {
+    showAllBricks();
+    score = 0;
+  }
 };
 
 // Draw everything
