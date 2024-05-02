@@ -100,6 +100,48 @@ const movePaddle = () => {
   }
 };
 
+// Move ball on canvas
+const moveBall = () => {
+  ball.x += ball.dx;
+  ball.y += ball.dy;
+
+  // wall detection (x-axis)
+  if (ball.x + ball.size > canvas.width || ball.x - ball.size < 0) {
+    ball.dx *= -1;
+  }
+
+  // wall detection (y-axis)
+  if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
+    ball.dy *= -1;
+  }
+
+  // paddle detection
+  if (
+    ball.x - ball.size > paddle.x &&
+    ball.x + ball.size < paddle.x + paddle.w &&
+    ball.y + ball.size > paddle.y
+  ) {
+    ball.dy = -ball.speed;
+  }
+
+  // brick detection
+  bricksArray.forEach((brickColumn) => {
+    brickColumn.forEach((brick) => {
+      if (brick.visible) {
+        if (
+          ball.x - ball.size > brick.x &&
+          ball.x + ball.size < brick.x + brick.w &&
+          ball.y + ball.size > brick.y &&
+          ball.y - ball.size < brick.y + brick.h
+        ) {
+          ball.dy *= -1;
+          brick.visible = false;
+        }
+      }
+    });
+  });
+};
+
 // Draw everything
 const draw = () => {
   // clear canvas
@@ -113,6 +155,7 @@ const draw = () => {
 // Update canvas drawing and animation
 const update = () => {
   movePaddle();
+  moveBall();
 
   draw(); // draw everything
 
