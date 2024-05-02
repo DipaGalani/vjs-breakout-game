@@ -86,15 +86,59 @@ const drawBricks = () => {
   });
 };
 
+// Move paddle on canvas
+const movePaddle = () => {
+  paddle.x += paddle.dx;
+
+  // wall detection
+  if (paddle.x + paddle.w > canvas.width) {
+    paddle.x = canvas.width - paddle.w;
+  }
+
+  if (paddle.x < 0) {
+    paddle.x = 0;
+  }
+};
+
 // Draw everything
 const draw = () => {
+  // clear canvas
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBall();
   drawPaddle();
   drawScore();
   drawBricks();
 };
 
-draw();
+// Update canvas drawing and animation
+const update = () => {
+  movePaddle();
+
+  draw(); // draw everything
+
+  requestAnimationFrame(update);
+};
+
+update();
+
+const keyDown = (e) => {
+  if (e.key === "Right" || e.key === "ArrowRight") {
+    paddle.dx = paddle.speed;
+  } else if (e.key === "Left" || e.key === "ArrowLeft") {
+    paddle.dx = -paddle.speed;
+  }
+};
+
+const keyUp = (e) => {
+  if (
+    e.key === "Right" ||
+    e.key === "ArrowRight" ||
+    e.key === "Left" ||
+    e.key === "ArrowLeft"
+  ) {
+    paddle.dx = 0;
+  }
+};
 
 // Event Listener
 rulesBtn.addEventListener("click", () => {
@@ -104,3 +148,6 @@ rulesBtn.addEventListener("click", () => {
 closeBtn.addEventListener("click", () => {
   rules.classList.remove("show");
 });
+
+document.addEventListener("keydown", keyDown);
+document.addEventListener("keyup", keyUp);
